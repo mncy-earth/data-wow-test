@@ -101,7 +101,7 @@ Before running Docker, you have the option to adjust some configurations:
 These optional configurations allow you to tailor the Docker Compose settings to your specific needs.
 
 #### Step 4: Start Docker Containers
-Run the following command in your terminal to start the containers:
+Once your environment is set up, simply use this command in your terminal to start the containers:
 ```
 docker-compose up
 ```
@@ -116,11 +116,11 @@ The containers will take a few moments to start. You can check their status by o
 ### 2) How to Set Up the Data Pipeline
 After starting all containers, follow these steps to initiate the data pipeline:
 1. Open [localhost:8080](http://localhost:8080) in your web browser.
-2. Log in using the default credentials:
+2. Login using the default credentials:
    - Username: `admin`
    - Password: `password`
 
-   If you have customized the Airflow Webserver's credentials, please use your updated values.`
+   *If you have customized the Airflow Webserver's credentials, please use your updated values.*
 3. Trigger the DAG named `data_pipeline`.
 
 Please note that the current data pipeline can only run manually and loads all sample data in a single run.
@@ -162,18 +162,27 @@ For a visual representation of my database design, please refer to the image bel
 
 ![Database Design](/others/images/Database%20Design.png)
 
+In PostgreSQL database, the table of interest is `data_sample`, which is located within the `postgres_db` database, under the `dwh` schema. This table contains a total of 5 columns, detailed as follows:
+| Column Name       | Data Type           |
+| ----------------- | ------------------- |
+| department_name   | VARCHAR(32)         |
+| sensor_serial     | VARCHAR(64)         |
+| create_at         | TIMESTAMP           |
+| product_name      | VARCHAR(16)         |
+| product_expire    | TIMESTAMP           |
+
 <!-- ================================================== -->
 
 ### 3) Data Loading Process
 
-The above figure not only illustrates the database design but also provides insights into our data loading process. We store our source data locally, consisting of $43,201$ files, each containing $1,914$ rows. To prevent task failures due to memory constraints, a batching approach was implemented so that we can process data incrementally.
+The above figure not only illustrates the database design but also provides insights into the data-loading process. We store our source data locally, consisting of $43,201$ files, each containing $1,914$ rows. To prevent task failures due to memory constraints, a batching approach was implemented so that we can process data incrementally.
 
 For instance, by loading $720$ files (equivalent to $1,380,480$ rows) at a time, it divides the process into 61 batches (with the last batch consisting of just one file), as demonstrated in the image.
 
 This approach can be considered as loading data twice daily, ensuring efficient data management and performance optimization. These strategies collectively enhance our data handling capabilities within the PostgreSQL database.
 
 <details>
-    <summary>Calculation of different batch size (for the given sample data)</summary>
+    <summary>Calculation of different batch sizes (for the given sample data)</summary>
 
 | Batch Size        | Batch Description   | Frequency        | Batch Count | Max Rows per Batch   |
 |:------------------|:--------------------|:-----------------|------------:|---------------------:|
@@ -229,3 +238,36 @@ This partitioning strategy allows us to process the data in manageable chunks, p
 <!-- ================================================== -->
 
 ## My Limitations & Improvement Approaches
+
+During the 5-day development of the data pipeline, several limitations slowed down the creation of an efficient data pipeline capable of completing its tasks within the desired 30-minute timeframe. Acknowledging these challenges is essential for future success. Here are some key limitations and potential improvement approaches:
+
+### 1) Resource Constraint
+
+A significant limitation was the constrained resources on my local machine. With only 8 GB of RAM and less than 1 GB available after starting Docker containers, achieving sub-minute completion for tasks involving over 6 GB of data loading was challenging.
+
+While testing the pipeline with a small number of Parquet files showed functionality, scaling up to handle a larger volume led to unexpected errors. This experience underscores the importance of resource management in real-world scenarios.
+
+In the absence of these limitations, I could explore resource-intensive solutions like **batch loading** and leveraging **powerful ETL tools**.
+
+### 2) Time Constraint
+
+This experience highlighted the need to be ready for unexpected issues. Not being prepared to handle large amounts of data caused longer troubleshooting times.
+
+I spent a huge amount of time repeatedly testing specific approaches. These are the strategies I experimented with:
+
+- Tuning the appropriate batch size for the current data pipeline.
+- Attempting to normalize tables by integrating them with the three master tables to improve data loading performance and adapt to future changes in data structure. However, this approach introduced complexities when joining tables and maintaining data consistency.
+- Exploring PySpark integration, although it encountered issues I need to investigate further. The PySpark command I aimed to test is as follows:
+    ```Python
+    spark.read.option("header","false").schema(sampledata_schema).option("recursiveFileLookup","true").parquet(sampledata_folder_path)
+    ```
+
+With additional time, I intend to investigate alternative solutions, including utilizing **cloud technologies**, leveraging **distributed processing frameworks** like Apache Spark, and **optimizing** the algorithms.
+
+### 3) Data Understanding Constraint
+
+The absence of a data dictionary and the use of mock data made it challenging to design the pipeline effectively to meet the requirements.
+
+Upon analyzing the sample data generation process, it appears to resemble streaming data. However, it remains unclear whether the data should be loaded in near-real-time or if it's acceptable to schedule the job for later loading. This information would guide decisions on batch sizes and **performance tracking** in the data pipeline.
+
+Another concern is that the data seems to follow a time series pattern, but it's uncertain if the data sequence is prioritized (although I assume it is). If the sequence isn't a priority, implementing **multiprocessing** could reduce processing time.
