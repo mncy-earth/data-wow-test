@@ -17,7 +17,7 @@ args = {
 
 dag = DAG(
     dag_id = 'mock_data_pipeline',
-    tags = ['test', 'dwh', 'master'],
+    tags = ['test', 'dwh', 'NF'],
     description = 'Proof of normalized logic',
     default_args = args,
     dagrun_timeout = timedelta(minutes=30),
