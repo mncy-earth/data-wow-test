@@ -7,7 +7,6 @@ from sqlalchemy import create_engine
 import pandas as pd
 import os
 from pathlib import Path
-# from numba import jit, cuda
 
 ####################################################################################################
 
@@ -35,7 +34,6 @@ def clear_data_from_postgresql():
     with postgres_engine.connect() as connection:
         connection.execute('TRUNCATE TABLE dwh.data_sample;')
 
-# @jit(target_backend='cuda')
 def extract_and_load_from_parquet():
     ### Prepare PostgreSQL connection
     username = 'dwh_user'; password = 'dwh_pass'; database = 'postgres_db'
