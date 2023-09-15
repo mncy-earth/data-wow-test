@@ -5,7 +5,7 @@
 - [Data Pipeline Design](#data-pipeline-design)
 
 <details>
-    <summary>Table of Contents</summary>
+    <summary>Document Outline</summary>
 
 1. [Introduction](#introduction)
 2. [Quick Start](#quick-start)
@@ -23,6 +23,9 @@
     1. [Clearing Data from PostgreSQL](#1-clearing-data-from-postgresql)
     2. [ETL: Extraction, Transformation, and Loading](#2-etl-extraction-transformation-and-loading)
 5. [My Limitations & Improvement Approaches](#my-limitations--improvement-approaches)
+    1. [Resource Constraint](#1-resource-constraint)
+    2. [Time Constraint](#2-time-constraint)
+    3. [Data Constraint](#3-data-constraint)
 </details>
 
 ## Introduction
@@ -116,7 +119,7 @@ The containers will take a few moments to start. You can check their status by o
 ### 2) How to Set Up the Data Pipeline
 After starting all containers, follow these steps to initiate the data pipeline:
 1. Open [localhost:8080](http://localhost:8080) in your web browser.
-2. Login using the default credentials:
+2. Log in using the default credentials:
    - Username: `admin`
    - Password: `password`
 
@@ -175,14 +178,14 @@ In PostgreSQL database, the table of interest is `data_sample`, which is located
 
 ### 3) Data Loading Process
 
-The above figure not only illustrates the database design but also provides insights into the data-loading process. We store our source data locally, consisting of $43,201$ files, each containing $1,914$ rows. To prevent task failures due to memory constraints, a batching approach was implemented so that we can process data incrementally.
+The above figure not only illustrates the database design but also provides insights into our data loading process. We store our source data locally, consisting of $43,201$ files, each containing $1,914$ rows. To prevent task failures due to memory constraints, a batching approach was implemented so that we can process data incrementally.
 
 For instance, by loading $720$ files (equivalent to $1,380,480$ rows) at a time, it divides the process into 61 batches (with the last batch consisting of just one file), as demonstrated in the image.
 
 This approach can be considered as loading data twice daily, ensuring efficient data management and performance optimization. These strategies collectively enhance our data handling capabilities within the PostgreSQL database.
 
 <details>
-    <summary>Calculation of different batch sizes (for the given sample data)</summary>
+    <summary>Calculation of different batch size (for the given sample data)</summary>
 
 | Batch Size        | Batch Description   | Frequency        | Batch Count | Max Rows per Batch   |
 |:------------------|:--------------------|:-----------------|------------:|---------------------:|
@@ -251,7 +254,7 @@ In the absence of these limitations, I could explore resource-intensive solution
 
 ### 2) Time Constraint
 
-This experience highlighted the need to be ready for unexpected issues. Not being prepared to handle large amounts of data caused longer troubleshooting times.
+This experience highlighted the need to be ready for unexpected issues. Not being prepared for handling large amounts of data caused longer troubleshooting times.
 
 I spent a huge amount of time repeatedly testing specific approaches. These are the strategies I experimented with:
 
@@ -264,7 +267,7 @@ I spent a huge amount of time repeatedly testing specific approaches. These are 
 
 With additional time, I intend to investigate alternative solutions, including utilizing **cloud technologies**, leveraging **distributed processing frameworks** like Apache Spark, and **optimizing** the algorithms.
 
-### 3) Data Understanding Constraint
+### 3) Data Constraint
 
 The absence of a data dictionary and the use of mock data made it challenging to design the pipeline effectively to meet the requirements.
 
