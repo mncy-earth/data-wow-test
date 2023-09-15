@@ -48,7 +48,7 @@ def extract_and_load_from_parquet():
     ### Merge sample data every 8 hours (1 batch = 480 parquet files = 918,720 rows)
     ### Merge sample data every 12 hours (1 batch = 720 parquet files = 1,378,080 rows)
     ### Merge sample data each day (1 batch = 1,440 parquet files = 2,756,160 rows)
-    no_files = 12*60
+    no_files = 24*60
     batches = [parquet_files[idx:idx+no_files] for idx in range(0, len(parquet_files), no_files)]
     print('no of batches:', len(batches))
     ### ETL
