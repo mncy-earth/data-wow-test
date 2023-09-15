@@ -28,13 +28,13 @@ x-airflow-common:
 
 services:
   ### If you've already generated the data, you can avoid regenerating it by commenting this out
-  # sampledata:
-  #   container_name: sampledata
-  #   image: python:3.8
-  #   volumes:
-  #     - ./sampledata:/opt/airflow/sampledata
-  #   working_dir: /opt/airflow/sampledata
-  #   command: /bin/sh -c "pip install --root-user-action=ignore -r requirements.txt && python sampledata_new.py"
+  sampledata:
+    container_name: sampledata
+    image: python:3.8
+    volumes:
+      - ./sampledata:/opt/airflow/sampledata
+    working_dir: /opt/airflow/sampledata
+    command: /bin/sh -c "pip install --root-user-action=ignore -r requirements.txt && python sampledata_new.py"
 
   postgres:
     container_name: postgres
