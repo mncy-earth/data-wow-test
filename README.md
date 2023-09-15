@@ -3,9 +3,10 @@
 - [How to Set Up the Data Pipeline](#2-how-to-set-up-the-data-pipeline)
 - [Database Design](#2-database-design)
 - [Data Pipeline Design](#data-pipeline-design)
+- [My Limitations & Improvement Approaches](#my-limitations--improvement-approaches)
 
 <details>
-    <summary>Document Outline</summary>
+    <summary><i>Click here to see document outline</i></summary>
 
 1. [Introduction](#introduction)
 2. [Quick Start](#quick-start)
@@ -78,7 +79,7 @@ project-folder/
  |— postgresql_setup.sql
 ```
 <details>
-    <summary>Explanation of each directory and file</summary>
+    <summary><i>Click here to read description of each directory and file</i></summary>
 
 - `dags/`: Folder of Python scripts to do DAGs
     - `data_pipeline.py`: **Python script for running data pipeline**
@@ -119,7 +120,7 @@ The containers will take a few moments to start. You can check their status by o
 ### 2) How to Set Up the Data Pipeline
 After starting all containers, follow these steps to initiate the data pipeline:
 1. Open [localhost:8080](http://localhost:8080) in your web browser.
-2. Log in using the default credentials:
+2. Login using the default credentials:
    - Username: `admin`
    - Password: `password`
 
@@ -128,7 +129,7 @@ After starting all containers, follow these steps to initiate the data pipeline:
 
 Please note that the current data pipeline can only run manually and loads all sample data in a single run.
 If you wish to make further adjustments to the DAG or task configuration, refer to the [Airflow Documentation](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/models/dag/index.html) for options like scheduling, email notifications on success or failure, and more.
-For more detailed information on current building the data pipeline, refer to the [Data Loading Process](#3-data-loading-process) and [Data Pipeline Design](#data-pipeline-design) sections.
+For more detailed information on the current building of the data pipeline, refer to the [Data Loading Process](#3-data-loading-process) and [Data Pipeline Design](#data-pipeline-design) sections.
 
 <!-- ================================================== -->
 <!-- ================================================== -->
@@ -165,7 +166,7 @@ For a visual representation of my database design, please refer to the image bel
 
 ![Database Design](/others/images/Database%20Design.png)
 
-In PostgreSQL database, the table of interest is `data_sample`, which is located within the `postgres_db` database, under the `dwh` schema. This table contains a total of 5 columns, detailed as follows:
+In the PostgreSQL database, the table of interest is `data_sample`, which is located within the `postgres_db` database, under the `dwh` schema. This table contains a total of 5 columns, detailed as follows:
 | Column Name       | Data Type           |
 | ----------------- | ------------------- |
 | department_name   | VARCHAR(32)         |
@@ -178,14 +179,14 @@ In PostgreSQL database, the table of interest is `data_sample`, which is located
 
 ### 3) Data Loading Process
 
-The above figure not only illustrates the database design but also provides insights into our data loading process. We store our source data locally, consisting of $43,201$ files, each containing $1,914$ rows. To prevent task failures due to memory constraints, a batching approach was implemented so that we can process data incrementally.
+The above figure not only illustrates the database design but also provides insights into the data loading process. We store our source data locally, consisting of $43,201$ files, each containing $1,914$ rows. To prevent task failures due to memory constraints, a batching approach was implemented so that we can process data incrementally.
 
 For instance, by loading $720$ files (equivalent to $1,380,480$ rows) at a time, it divides the process into 61 batches (with the last batch consisting of just one file), as demonstrated in the image.
 
 This approach can be considered as loading data twice daily, ensuring efficient data management and performance optimization. These strategies collectively enhance our data handling capabilities within the PostgreSQL database.
 
 <details>
-    <summary>Calculation of different batch size (for the given sample data)</summary>
+    <summary><i>Click here to see the calculation of different batch sizes (for the given sample data)</i></summary>
 
 | Batch Size        | Batch Description   | Frequency        | Batch Count | Max Rows per Batch   |
 |:------------------|:--------------------|:-----------------|------------:|---------------------:|
@@ -254,7 +255,7 @@ In the absence of these limitations, I could explore resource-intensive solution
 
 ### 2) Time Constraint
 
-This experience highlighted the need to be ready for unexpected issues. Not being prepared for handling large amounts of data caused longer troubleshooting times.
+This experience highlighted the need to be ready for unexpected issues. Not being prepared to handle large amounts of data caused longer troubleshooting times.
 
 I spent a huge amount of time repeatedly testing specific approaches. These are the strategies I experimented with:
 
