@@ -265,7 +265,7 @@ I spent a huge amount of time repeatedly testing specific approaches. These are 
     spark.read.option("header","false").schema(sampledata_schema).option("recursiveFileLookup","true").parquet(sampledata_folder_path)
     ```
 
-With additional time, I intend to investigate alternative solutions, including utilizing **cloud technologies**, leveraging **distributed processing frameworks** like Apache Spark, and **optimizing** the algorithms.
+With additional time, I intend to investigate alternative solutions, including utilizing **cloud technologies**, leveraging **distributed processing frameworks** like Apache Spark, configuring parameters to align with requirements, and **optimizing** the algorithms.
 
 ### 3) Data Constraint
 
