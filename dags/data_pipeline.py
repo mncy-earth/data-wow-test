@@ -55,7 +55,7 @@ def extract_and_load_from_parquet():
         ### Extract sample data from parquet file
         df = pd.concat(pd.read_parquet(parquet_file) for parquet_file in batch)
         ### Load data into PostgreSQL database
-        df.to_sql("data_sample", con=postgres_engine, schema='dwh', if_exists='append', index=False, method='multi')
+        df.to_sql("data_sample", con=postgres_engine, schema='dwh', if_exists='append', index=False)
 
 ####################################################################################################
 
