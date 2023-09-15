@@ -1,0 +1,107 @@
+version: '3.8'
+x-airflow-common:
+  &airflow-common
+  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.7.1}
+  environment:
+    &airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow_user:airflow_pass@postgres/airflow_db
+    AIRFLOW__DATABASE__SQL_ALCHEMY_POOL_SIZE: '0'
+    AIRFLOW__DATABASE__SQL_ALCHEMY_MAX_OVERFLOW: '-1'
+    AIRFLOW__CORE__FERNET_KEY: ''
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+  volumes:
+    - ./sampledata:/opt/airflow/sampledata
+    - ./dags:/opt/airflow/dags
+    - ./logs:/opt/airflow/logs
+  user: "${AIRFLOW_UID:-50000}:0"
+  depends_on:
+    &airflow-common-depends-on
+    postgres:
+      condition: service_healthy
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - capabilities: ["gpu"]
+
+services:
+  ### If sample data is not generated yet, uncomment this service
+  # sampledata:
+  #   container_name: sampledata
+  #   image: python:3.8
+  #   volumes:
+  #     - ./sampledata:/opt/airflow/sampledata
+  #   working_dir: /opt/airflow/sampledata
+  #   command: /bin/sh -c "pip install --root-user-action=ignore -r requirements.txt && python sampledata_new.py"
+
+  postgres:
+    container_name: postgres
+    image: postgres:13
+    environment:
+      POSTGRES_USER: $POSTGRES_USERNAME_INIT
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD_INIT
+      POSTGRES_DB: $POSTGRES_DATABASE_INIT
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+      - ./postgresql_setup.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow_user", "-d", "airflow_db"]
+      interval: 5s
+      retries: 5
+    restart: always
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: ["gpu"]
+
+  airflow-init:
+    <<: *airflow-common
+    container_name: airflow-init
+    command: version
+    environment:
+      <<: *airflow-common-env
+      _AIRFLOW_DB_MIGRATE: 'true'
+      _AIRFLOW_WWW_USER_CREATE: 'false'
+      _AIRFLOW_WWW_USER_USERNAME: $AIRFLOW_WWW_USERNAME_INIT
+      _AIRFLOW_WWW_USER_PASSWORD: $AIRFLOW_WWW_PASSWORD_INIT
+
+  airflow-webserver:
+    <<: *airflow-common
+    container_name: airflow-webserver
+    command: webserver
+    ports:
+      - 8080:8080
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-scheduler:
+    <<: *airflow-common
+    container_name: airflow-scheduler
+    command: scheduler
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+
+  # pyspark:
+  #   image: bitnami/spark:3.3.3
+  #   container_name: pyspark
+  #   command: /bin/sh -c "pip install pyspark"
+
+volumes:
+  postgres_db:
+    driver: local
