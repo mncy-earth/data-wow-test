@@ -118,14 +118,22 @@ The containers will take a few moments to start. You can check their status by o
 <!-- ================================================== -->
 
 ### 2) How to Set Up the Data Pipeline
-After starting all containers, follow these steps to initiate the data pipeline:
+After starting all containers, you can follow these steps to initiate the data pipeline:
 1. Open [localhost:8080](http://localhost:8080) in your web browser.
 2. Login using the default credentials:
    - Username: `admin`
    - Password: `password`
 
-   *If you have customized the Airflow Webserver's credentials, please use your updated values.*
-3. Trigger the DAG named `data_pipeline`.
+   NOTE: *If you have customized the Airflow Webserver's credentials, please use your updated values.*
+3. Trigger the `data_pipeline` DAG, as shown in the image below.
+![Airflow - Trigger Data Pipeline](/others/images/Airflow%20-%20Trigger%20Data%20Pipeline.png)
+
+<details><summary><i>Click here for a guide on viewing data pipeline logs</i></summary>
+
+![Airflow - See Logs Step 1](/others/images/Airflow%20-%20See%20Logs%20(1).png)
+![Airflow - See Logs Step 2](/others/images/Airflow%20-%20See%20Logs%20(2).png)
+![Airflow - See Logs Step 3](/others/images/Airflow%20-%20See%20Logs%20(3).png)
+</details><br>
 
 Please note that the current data pipeline can only run manually and loads all sample data in a single run.
 If you wish to make further adjustments to the DAG or task configuration, refer to the [Airflow Documentation](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/models/dag/index.html) for options like scheduling, email notifications on success or failure, and more.
@@ -147,7 +155,7 @@ Here are the key components of my database setup:
 | Database        | Schema   | Description                                      |
 |-----------------|----------|--------------------------------------------------|
 | `postgres_db`   | `public` | currently empty and serves no specific purpose   |
-|                 | `dwh`    | dedicated to serving as a data warehouse         |
+| `postgres_db`   | `dwh`    | dedicated to serving as a data warehouse         |
 | `airflow_db`    | `public` | used to store metadata related to Airflow        |
 
 During the PostgreSQL container initialization, three roles with different permissions were created:
