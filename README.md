@@ -42,12 +42,21 @@ If you don't have Docker installed on your system, you can easily install it by 
 
 #### Step 2: Set Up the Project Structure
 Before running Docker containers, it's important to organize the project directories properly. You have two options for achieving this:
-##### Option 1: Clone my GitHub Repository
+##### <u>Option 1</u>: Clone my GitHub Repository
 You can clone this repository directly using the following command:
 ```bash
 git clone https://github.com/mncy-earth/data-wow-test.git
 ```
-##### Option 2: Manual Setup
+Navigate to the project directory::
+```bash
+cd data-wow-test
+```
+Create a `logs` folder:
+```bash
+mkdir ./logs
+```
+Now, you're ready to proceed with next step.
+##### <u>Option 2</u>: Manual Setup
 Alternatively, you can set up the project structure manually as follows:
 ```bash
 project-folder/
