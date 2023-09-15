@@ -255,16 +255,18 @@ In the absence of these limitations, I could explore resource-intensive solution
 
 ### 2) Time Constraint
 
-This experience highlighted the need to be ready for unexpected issues. Not being prepared to handle large amounts of data caused longer troubleshooting times.
+This experience highlighted the need to be ready for unexpected issues. I spent a huge amount of time repeatedly testing specific approaches. Not being prepared to handle large amounts of data caused longer troubleshooting times.
 
-I spent a huge amount of time repeatedly testing specific approaches. These are the strategies I experimented with:
+<details>
+    <summary><i>Click here to explore the experimented strategies</i></summary>
 
-- Tuning the appropriate batch size for the current data pipeline.
-- Attempting to normalize tables by integrating them with the three master tables to improve data loading performance and adapt to future changes in data structure. However, this approach introduced complexities when joining tables and maintaining data consistency.
-- Exploring PySpark integration, although it encountered issues I need to investigate further. The PySpark command I aimed to test is as follows:
+- **Batch Size Optimization:** Tuning the appropriate batch size for the current data pipeline.
+- **Table Normalization:** Attempting to normalize tables by integrating them with the three master tables to improve data loading performance and adapt to future changes in the data structure. However, this approach introduced complexities when joining tables and maintaining data consistency.
+- **PySpark Integration:** Exploring PySpark integration, although it encountered issues that need further investigation. The PySpark command I aimed to test is as follows:
     ```Python
     spark.read.option("header","false").schema(sampledata_schema).option("recursiveFileLookup","true").parquet(sampledata_folder_path)
     ```
+</details><br>
 
 With additional time, I intend to investigate alternative solutions, including utilizing **cloud technologies**, leveraging **distributed processing frameworks** like Apache Spark, configuring parameters to align with requirements, and **optimizing** the algorithms.
 
